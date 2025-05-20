@@ -5,7 +5,6 @@ import json
 import time
 import logging
 import sys
-from homework_2 import config
 
 logging.basicConfig(
     level=logging.DEBUG,
