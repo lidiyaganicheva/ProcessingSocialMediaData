@@ -23,6 +23,7 @@ class LatencyMonitor:
         self.latency_data = []
         self.report_interval = 60
         self.last_report_time = time.time()
+        print("Latency monitor initialized")
 
     def calculate_latency(self, message):
         """
@@ -45,6 +46,7 @@ class LatencyMonitor:
                 'processed_by': message.value.get('processed_by', 'unknown'),
                 'partition': int(message.partition)
             })
+            # print(f"Processed message from partition {message.partition}, latency: {total_latency:.2f}ms")
             return total_latency
         except Exception as e:
             print(f"Error calculating latency: {str(e)}")
@@ -53,6 +55,7 @@ class LatencyMonitor:
 
     def generate_report(self):
         if not self.latency_data:
+            print("No messages processed in this interval")
             return
         df = pd.DataFrame(self.latency_data)
         report = {
@@ -85,6 +88,7 @@ class LatencyMonitor:
         print("Starting latency monitoring service...")
         print(f"Monitoring topic: processed-messages")
         print(f"Bootstrap servers: {config.KAFKA_BOOTSTRAP_SERVERS}")
+        print("Waiting for messages...")
         try:
             for message in self.consumer:
                 try:
@@ -106,4 +110,5 @@ class LatencyMonitor:
 
 
 if __name__ == "__main__":
-    monitor = LatencyM
+    monitor = LatencyMonitor()
+    monitor.run()

@@ -5,6 +5,8 @@ import json
 import time
 import logging
 import sys
+import config
+import random
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -14,12 +16,11 @@ logging.basicConfig(
     ]
 )
 
-# Configuration
 KAFKA_TOPIC = config.KAFKA_TOPIC
 KAFKA_BOOTSTRAP_SERVERS = config.KAFKA_BOOTSTRAP_SERVERS
 DATASET_PATH = config.DATASET_PATH
 NUM_PARTITIONS = config.NUM_PARTITIONS
-NUM_REPLICAS = config.NUM_REPLICAS
+REPLICATION_FACTOR = config.REPLICATION_FACTOR
 
 def create_topic_if_not_exists(topic_name, partitions, replication_factor):
     admin_client = KafkaAdminClient(bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
@@ -40,14 +41,43 @@ def load_data(file_path):
             yield row.to_dict()
 
 def send_comments(producer, topic, comment_generator):
+    partition_counter = 0
+    partition_counts = {i: 0 for i in range(NUM_PARTITIONS)}
+
     for comment in comment_generator:
-        message = json.dumps(comment).encode('utf-8')
-        producer.send(topic, message)
-        time.sleep(0.01)
+        try:
+            message = json.dumps(comment)
+            comment_hash = hash(message)
+            partition = abs(comment_hash) % NUM_PARTITIONS
+            key = str(partition)
+            partition_counter += 1
+            partition_counts[partition] += 1
+
+            future = producer.send(topic, key=key, value=message)
+            future.get(timeout=10)
+
+            if partition_counter % 1000 == 0:
+                print(f"\nMessages sent so far: {partition_counter}")
+                print("Messages per partition:")
+                for p, count in partition_counts.items():
+                    print(f"  Partition {p}: {count}")
+
+            time.sleep(0.01)
+        except Exception as e:
+            print(f"Error sending message: {str(e)}")
+            continue
+
+    print("\nFinal message distribution:")
+    for p, count in partition_counts.items():
+        print(f"  Partition {p}: {count} messages")
 
 if __name__ == "__main__":
-    create_topic_if_not_exists(KAFKA_TOPIC, NUM_PARTITIONS, NUM_REPLICAS)
-    producer = KafkaProducer(bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
+    create_topic_if_not_exists(KAFKA_TOPIC, NUM_PARTITIONS, REPLICATION_FACTOR)
+    producer = KafkaProducer(
+        bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
+        value_serializer=lambda x: x.encode('utf-8') if isinstance(x, str) else json.dumps(x).encode('utf-8'),
+        key_serializer=lambda x: str(x).encode('utf-8') if x else None
+    )
     comment_gen = load_data(DATASET_PATH)
     send_comments(producer, KAFKA_TOPIC, comment_gen)
     producer.flush()
