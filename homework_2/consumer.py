@@ -15,6 +15,7 @@ CSV_FILE = config.PROCESSED_FILENAME
 KAFKA_BOOTSTRAP_SERVERS = config.KAFKA_BOOTSTRAP_SERVERS
 NUM_PARTITIONS = config.NUM_PARTITIONS
 REPLICATION_FACTOR = config.REPLICATION_FACTOR
+NUM_CONSUMERS = config.NUM_CONSUMERS
 
 def verify_topic():
     admin_client = KafkaAdminClient(bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
@@ -41,18 +42,13 @@ def process_messages(consumer_id):
     topic_config = admin_client.describe_topics([TOPIC_NAME])[0]
     total_partitions = len(topic_config['partitions'])
     print(f"Topic {TOPIC_NAME} has {total_partitions} partitions")
-    if total_partitions < 5:
-        if consumer_id < total_partitions:
-            assigned_partitions = [consumer_id]
-        else:
-            assigned_partitions = []
-    else:
-        partitions_per_consumer = total_partitions // 5
-        start_partition = consumer_id * partitions_per_consumer
-        end_partition = start_partition + partitions_per_consumer if consumer_id < 4 else total_partitions
-        assigned_partitions = list(range(start_partition, end_partition))
-        if not assigned_partitions:
-            assigned_partitions = [consumer_id % total_partitions]
+
+    partitions_per_consumer = total_partitions // NUM_CONSUMERS
+    start_partition = consumer_id * partitions_per_consumer
+    end_partition = start_partition + partitions_per_consumer
+    assigned_partitions = list(range(start_partition, end_partition))
+    if not assigned_partitions:
+        assigned_partitions = [consumer_id % total_partitions]
     print(f"Consumer {consumer_id} will handle partitions: {assigned_partitions}")
     consumer = KafkaConsumer(
         bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
@@ -139,10 +135,10 @@ def main():
     parser.add_argument('--num-consumers', type=int, default=1,
                         help='Number of consumers to run (default: 1)')
     args = parser.parse_args()
-    print(f"Starting {args.num_consumers} consumers...")
+    print(f"Starting {NUM_CONSUMERS} consumers...")
     verify_topic()
-    with ThreadPoolExecutor(max_workers=args.num_consumers) as executor:
-        futures = [executor.submit(process_messages, i) for i in range(args.num_consumers)]
+    with ThreadPoolExecutor(max_workers=NUM_CONSUMERS) as executor:
+        futures = [executor.submit(process_messages, i) for i in range(NUM_CONSUMERS)]
         try:
             for future in futures:
                 future.result()
