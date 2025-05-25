@@ -7,3 +7,4 @@ File name should be 'entertainment_comicbooks.csv', if not - rename it in config
 ./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic reddit-comments --max-messages=5
 5. Change number of partitions in config.py file
 6. Run consumer.py - kafka messages will be consumed, processed_data.csv created with reddit comment timestamp and the same value but converted
+7. Run latency_monitor.py
