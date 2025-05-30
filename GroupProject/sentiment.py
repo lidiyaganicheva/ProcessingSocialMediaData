@@ -5,12 +5,10 @@ import threading
 import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
-from GroupProject.config import NUM_PARTITIONS
-from GroupProject.generator import REPLICATION_FACTOR
 from generator import create_topic_if_not_exists
-
 from config import (KAFKA_LANGUAGE_TOPIC, KAFKA_SENTIMENT_TOPIC,
-                    KAFKA_BOOTSTRAP_SERVERS, NUM_CONSUMERS)
+                    KAFKA_BOOTSTRAP_SERVERS, NUM_CONSUMERS,
+                    NUM_PARTITIONS, REPLICATION_FACTOR)
 
 logging.basicConfig(
     level=logging.INFO,
