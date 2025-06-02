@@ -9,5 +9,5 @@ NUM_CONSUMERS = 5
 
 REPLICATION_FACTOR = 2
 
-KAFKA_LANGUAGE_TOPIC = "reddit-comments"
+KAFKA_LANGUAGE_TOPIC = "reddit-comments-with-lang"
 KAFKA_SENTIMENT_TOPIC = "sentiment-detected"
