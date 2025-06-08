@@ -11,3 +11,4 @@ REPLICATION_FACTOR = 2
 
 KAFKA_LANGUAGE_TOPIC = "reddit-comments-with-lang"
 KAFKA_SENTIMENT_TOPIC = "sentiment-detected"
+KAFKA_KEYWORDS_TOPIC = "keywords-detected"
