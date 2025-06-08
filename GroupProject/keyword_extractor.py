@@ -64,7 +64,7 @@ class KeywordExtractor:
                         logging.warning(f"No text found in message {message_count}")
                         continue
                         
-                    keywords = self.extract_keywords(comment_text)
+                    keywords = self.extract_keywords(comment_text, num_keywords=3)
                     if not keywords:
                         logging.warning(f"No keywords extracted from message {message_count}")
                         continue
