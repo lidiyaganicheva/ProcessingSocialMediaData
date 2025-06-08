@@ -9,10 +9,14 @@ File name should be 'entertainment_comicbooks.csv', if not - rename it in config
 4. To check message structure in broker container run:
 ./kafka-console-consumer.sh --bootstrap-server localhost:29092 --topic reddit-comments --max-messages=5
 
-5. To extract keywords from comments, run keyword_extractor.py:
+5. To detect the language run language_detector.py
+
+6. To detect the sentiment run sentiment.py
+
+7. To extract keywords from comments, run keyword_extractor.py:
 python keyword_extractor.py
 
-6. To check extracted keywords, run in broker container:
+8. To check extracted keywords, run in broker container:
 ./kafka-console-consumer.sh --bootstrap-server localhost:29092 --topic reddit-keywords --max-messages=5
 
 The keyword extractor service:
