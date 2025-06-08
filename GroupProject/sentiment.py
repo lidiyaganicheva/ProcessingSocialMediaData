@@ -3,6 +3,7 @@ from kafka import KafkaConsumer, KafkaProducer
 import logging
 import threading
 import nltk
+import config
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 from generator import create_topic_if_not_exists
@@ -11,7 +12,7 @@ from config import (KAFKA_LANGUAGE_TOPIC, KAFKA_SENTIMENT_TOPIC,
                     NUM_PARTITIONS, REPLICATION_FACTOR)
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=config.LOGGING_LEVEL,
     format="%(asctime)s [%(levelname)s] %(message)s",
 )
 

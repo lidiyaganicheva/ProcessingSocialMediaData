@@ -1,4 +1,8 @@
 import os
+import logging
+
+
+LOGGING_LEVEL = logging.INFO
 
 KAFKA_GENERATOR_TOPIC = "reddit-comments"
 KAFKA_BOOTSTRAP_SERVERS = ['localhost:29092', 'localhost:39092', 'localhost:49092']
