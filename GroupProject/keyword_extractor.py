@@ -9,7 +9,7 @@ import logging
 import sys
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=config.LOGGING_LEVEL,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(stream=sys.stdout)
