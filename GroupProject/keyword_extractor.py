@@ -59,7 +59,7 @@ class KeywordExtractor:
                     logging.debug(f"Processing message {message_count}")
                     logging.debug(f"Message value type: {type(message.value)}")
                     logging.debug(f"Message value: {message.value[:200]}...")
-                    comment_data = json.loads(json.loads(message.value))
+                    comment_data = json.loads(message.value)
                     comment_text = comment_data.get("1", "")
                     if not comment_text:
                         logging.warning(f"No text found in message {message_count}")
