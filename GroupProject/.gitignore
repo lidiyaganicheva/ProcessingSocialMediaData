@@ -6527,5 +6527,4 @@
 /.venv311/lib/python3.11/site-packages/six.py
 /.venv311/pyvenv.cfg
 
-report.json
 __pycache__/
