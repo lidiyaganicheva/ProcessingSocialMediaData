@@ -17,7 +17,7 @@ File name should be 'entertainment_comicbooks.csv', if not - rename it in config
     pip install -r requirements.txt
 ```
 
-**3. Run **
+**3. Run**
 ```
     docker compose up -d
 ```
